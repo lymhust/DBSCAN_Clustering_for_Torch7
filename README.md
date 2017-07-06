@@ -15,8 +15,8 @@ Example:
 local dbscan = require 'dbscan'
 
 local input = torch.DoubleTensor({{1,3,1},{1,4,1},{1,5,1},
-				 {1,6,1},{2,2,1},{2,3,0},
-				 {2,4,0},{2,5,0},{2,6,0}})
+				  {1,6,1},{2,2,1},{2,3,0},
+				  {2,4,0},{2,5,0},{2,6,0}})
                                   
 local epsilon, mininum = 1, 2
 
