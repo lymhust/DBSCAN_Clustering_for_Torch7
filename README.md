@@ -1,7 +1,7 @@
-DBSCAN Clustering for Torch7, wrapped from https://github.com/gyaikhom/dbscan
+DBSCAN Clustering for Torch7
 ===================
 
-A short binding to use DBSCAN in Torch7.
+A short binding to use DBSCAN in Torch7, wrapped from https://github.com/gyaikhom/dbscan
 
 You have to have installed Torch7, then do this:
 
