@@ -1,29 +1,36 @@
-DBSCAN Clustering for Torch7
+torch-caffe-binding
 ===================
 
-A short binding to use DBSCAN in Torch7, wrapped from https://github.com/gyaikhom/dbscan
+A short binding to use Caffe as a module in Torch7. Has the same functionality as MATLAB bindings.
 
-You have to have installed Torch7, then do this:
+You have to have installed and built Caffe, then do this:
 
 ```bash
-luarocks make
+CAFFE_DIR=/*path-to-caffe-root*/ luarocks install caffe
 ```
 
-Example:
+Forward and backward are supported:
 
 ```lua
-local dbscan = require 'dbscan'
+require 'caffe'
 
-local input = torch.DoubleTensor({{1,3,1},{1,4,1},{1,5,1},
-				  {1,6,1},{2,2,1},{2,3,0},
-				  {2,4,0},{2,5,0},{2,6,0}})
-                                  
-local epsilon, mininum = 1, 2
+net = caffe.Net('deploy.prototxt', 'bvlc_alexnet.caffemodel', 'test')
+input = torch.FloatTensor(10,3,227,227)
+output = net:forward(input)
 
-for i = 1, 2000 do
-	sys.tic()
-	local classid = dbscan.dbscan(input, epsilon, mininum)
-	print(classid)
-	print('dbscan: '..(sys.toc()*1000)..'ms')
-end
+gradOutput = torch.FloatTensor(10,1000,1,1)
+gradInput = net:backward(input, gradOutput)
 ```
+
+Use can also use it inside a network as nn.Module, for example:
+
+```lua
+require 'caffe'
+
+model = nn.Sequential()
+model:add(caffe.Net('deploy.prototxt', 'bvlc_alexnet.caffemodel', 'test'))
+model:add(nn.Linear(1000,1))
+```
+
+To load Caffe networks in Torch7 without having Caffe installed use this:
+https://github.com/szagoruyko/loadcaffe

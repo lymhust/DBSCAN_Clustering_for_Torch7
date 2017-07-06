@@ -286,6 +286,7 @@ unsigned int parse_input(
     unsigned int *minpts)
 {
     unsigned int num_points = input->size[0], i = 0;
+    double* input_p = THDoubleTensor_data(input);
     point_t *p = (point_t *)
         calloc(num_points, sizeof(point_t));
     if (p == NULL) {
@@ -293,9 +294,10 @@ unsigned int parse_input(
         return 0;
     }
     while (i < num_points) {
-    	  p[i].x = THDoubleTensor_get2d(input, i, 0);
-    	  p[i].y = THDoubleTensor_get2d(input, i, 1);
-    	  p[i].z = THDoubleTensor_get2d(input, i, 2);
+          int ind = i*3;
+    	  p[i].x = input_p[ind];   //THDoubleTensor_get2d(input, i, 0);
+    	  p[i].y = input_p[ind+1]; //THDoubleTensor_get2d(input, i, 1);
+    	  p[i].z = input_p[ind+2]; //THDoubleTensor_get2d(input, i, 2);
           p[i].cluster_id = UNCLASSIFIED;
           ++i;
     }
@@ -327,8 +329,10 @@ void get_results(
     THIntTensor* classid)
 {
     unsigned int i = 0;
+    int* classid_p = THIntTensor_data(classid);
     while (i < num_points) {
-          THIntTensor_set1d(classid, i, points[i].cluster_id);
+          //THIntTensor_set1d(classid, i, points[i].cluster_id);
+          classid_p[i] = points[i].cluster_id;
           ++i;
     }
 }
@@ -340,9 +344,6 @@ int dbscan_torch(THDoubleTensor* input, THIntTensor* classid, double epsilon, un
     if (num_points) {
         dbscan(points, num_points, epsilon,
                minpts, euclidean_dist);
-        //printf("Epsilon: %lf\n", epsilon);
-        //printf("Minimum points: %u\n", minpts);
-        //print_points(points, num_points);
         get_results(points, num_points, classid);
     }
     free(points);
